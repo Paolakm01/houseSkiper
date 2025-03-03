@@ -1,0 +1,392 @@
+import React from 'react';
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { ArrowLeft, Star } from 'lucide-react-native';
+import Colors from '../../constants/Colors';
+import Button from '../../components/Button';
+
+// Sample data for cleaners - in a real app, this would come from an API
+const cleaners = [
+  {
+    id: '1',
+    name: 'María Aguilar Azalar',
+    specialty: 'Specialized in special washes',
+    rating: 9.8,
+    totalJobs: 20,
+    hourlyRate: 15,
+    imageUrl: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+    about: 'I am María, a cleaning specialist with over 5 years of experience. I specialize in deep cleaning and special washes for all types of homes. My attention to detail and commitment to excellence ensure your home will be spotless.',
+    services: ['Deep Cleaning', 'Special Washes', 'Window Cleaning', 'Kitchen Sanitization'],
+    reviews: [
+      {
+        id: '1',
+        user: 'John Smith',
+        rating: 9.9,
+        date: '15 Feb 2023',
+        comment: 'María was amazing! My house has never been cleaner. Her attention to detail is impressive, and she was very professional. Highly recommended!'
+      },
+      {
+        id: '2',
+        user: 'Sarah Johnson',
+        rating: 9.7,
+        date: '3 Jan 2023',
+        comment: 'Great service! María was punctual, thorough, and friendly. Will definitely book again.'
+      }
+    ]
+  },
+  {
+    id: '2',
+    name: 'Matt Andrew',
+    specialty: 'Expert in office cleaning',
+    rating: 9.8,
+    totalJobs: 40,
+    hourlyRate: 25,
+    imageUrl: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+    about: 'I am Matt, an office cleaning expert with 7+ years of experience. I specialize in creating clean, organized, and productive workspaces for businesses of all sizes. My thorough approach ensures no detail is missed.',
+    services: ['Office Cleaning', 'Desk Sanitization', 'Floor Cleaning', 'Restroom Maintenance'],
+    reviews: [
+      {
+        id: '1',
+        user: 'Tech Solutions Inc.',
+        rating: 9.8,
+        date: '20 Mar 2023',
+        comment: 'Matt has been cleaning our office for 6 months now, and we couldn\'t be happier. He\'s reliable, thorough, and our office has never looked better!'
+      },
+      {
+        id: '2',
+        user: 'Legal Partners LLC',
+        rating: 9.9,
+        date: '5 Feb 2023',
+        comment: 'Excellent service! Matt is professional, detail-oriented, and always goes the extra mile. Highly recommended for any office space.'
+      }
+    ]
+  },
+  {
+    id: '3',
+    name: 'Olivia Foster',
+    specialty: 'Specialist in Office Sanitation',
+    rating: 9.2,
+    totalJobs: 60,
+    hourlyRate: 28,
+    imageUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+    about: 'I am Olivia Foster, a Specialist in Office Sanitation. With my dedicated expertise, I ensure that your workspace is impeccably clean. My meticulous attention to detail and commitment to excellence create a healthy and productive office environment. Trust me for spotless and hygienic spaces.',
+    services: ['Common Areas Cleaning', 'Bathroom Cleaning', 'Office Cleaning', 'Floor and Upholstery Cleaning', 'Cafeteria Service', 'Restroom Sanitization'],
+    reviews: [
+      {
+        id: '1',
+        user: 'Caleb Lee',
+        rating: 9.8,
+        date: '23 Feb 2023',
+        comment: 'Olivia was outstanding! From offices to bathrooms, every corner sparkles. Her attention to detail and professionalism are commendable. I highly recommend her for a seamless and top-notch cleaning experience!'
+      },
+      {
+        id: '2',
+        user: 'Emma Wilson',
+        rating: 9.5,
+        date: '10 Jan 2023',
+        comment: "We hired Olivia for our startup office, and she exceeded our expectations. The place looks and smells amazing. She's our go-to cleaner now!"
+      }
+    ]
+  },
+  {
+    id: '4',
+    name: 'Noah Chang',
+    specialty: 'Specialist in Office Sanitation',
+    rating: 9.7,
+    totalJobs: 35,
+    hourlyRate: 22,
+    imageUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+    about: 'I am Noah, with over 4 years of experience in residential and commercial cleaning. I take pride in transforming spaces and ensuring they\'re not just clean but truly sanitized. My clients appreciate my reliability and thoroughness.',
+    services: ['Home Cleaning', 'Apartment Cleaning', 'Move-in/Move-out Cleaning', 'Sanitization Services'],
+    reviews: [
+      {
+        id: '1',
+        user: 'Rebecca Taylor',
+        rating: 9.7,
+        date: '12 Apr 2023',
+        comment: 'Noah did an amazing job with our move-out cleaning. The landlord was impressed and we got our full deposit back! Highly recommend his services.'
+      },
+      {
+        id: '2',
+        user: 'Michael Chen',
+        rating: 9.6,
+        date: '28 Mar 2023',
+        comment: 'Punctual, professional, and thorough. Noah cleaned our home exactly as requested and paid attention to all the details. Will definitely book again.'
+      }
+    ]
+  },
+];
+
+export default function CleanerProfileScreen() {
+  const { id } = useLocalSearchParams();
+  const router = useRouter();
+  
+  // Find the cleaner by ID
+  const cleaner = cleaners.find(c => c.id === id);
+  
+  if (!cleaner) {
+    return (
+      <View style={styles.container}>
+        <Text>Cleaner not found</Text>
+      </View>
+    );
+  }
+
+  const handleBookNow = () => {
+    // Navigate to booking screen
+    router.push('/booking');
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <Stack.Screen 
+        options={{
+          headerShown: false,
+        }}
+      />
+      
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <TouchableOpacity 
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <ArrowLeft size={24} color={Colors.light.white} />
+          </TouchableOpacity>
+        </View>
+        
+        <View style={styles.profileSection}>
+          <Image source={{ uri: cleaner.imageUrl }} style={styles.profileImage} />
+          <Text style={styles.name}>{cleaner.name}</Text>
+          <Text style={styles.specialty}>{cleaner.specialty}</Text>
+          
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statLabel}>Score</Text>
+              <View style={styles.ratingContainer}>
+                <Star size={14} color="#FFB800" fill="#FFB800" />
+                <Text style={styles.statValue}>{cleaner.rating.toFixed(1)}</Text>
+              </View>
+            </View>
+            
+            <View style={styles.statDivider} />
+            
+            <View style={styles.statItem}>
+              <Text style={styles.statLabel}>Total Jobs</Text>
+              <Text style={styles.statValue}>{cleaner.totalJobs}</Text>
+            </View>
+            
+            <View style={styles.statDivider} />
+            
+            <View style={styles.statItem}>
+              <Text style={styles.statLabel}>Value</Text>
+              <Text style={styles.statValue}>${cleaner.hourlyRate}/hr</Text>
+            </View>
+          </View>
+        </View>
+        
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>About</Text>
+          <Text style={styles.aboutText}>{cleaner.about}</Text>
+        </View>
+        
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>What does it include?</Text>
+          <View style={styles.servicesContainer}>
+            {cleaner.services.map((service, index) => (
+              <View key={index} style={styles.serviceTag}>
+                <Text style={styles.serviceText}>{service}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+        
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Reviews</Text>
+          {cleaner.reviews.map(review => (
+            <View key={review.id} style={styles.reviewCard}>
+              <View style={styles.reviewHeader}>
+                <Text style={styles.reviewerName}>{review.user}</Text>
+                <View style={styles.reviewRating}>
+                  <Star size={14} color="#FFB800" fill="#FFB800" />
+                  <Text style={styles.reviewRatingText}>{review.rating.toFixed(1)}</Text>
+                </View>
+              </View>
+              <Text style={styles.reviewDate}>{review.date}</Text>
+              <Text style={styles.reviewComment}>{review.comment}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
+      
+      <View style={styles.footer}>
+        <Button 
+          title="Book now" 
+          onPress={handleBookNow}
+        />
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#152744',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  header: {
+    backgroundColor: '#152744',
+    paddingTop: 20,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileSection: {
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    backgroundColor: '#152744',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 3,
+    borderColor: Colors.light.white,
+    marginBottom: 12,
+  },
+  name: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: Colors.light.white,
+    marginBottom: 4,
+  },
+  specialty: {
+    fontSize: 14,
+    color: Colors.light.white,
+    opacity: 0.8,
+    marginBottom: 16,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    width: '100%',
+    justifyContent: 'space-between',
+  },
+  statItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  statLabel: {
+    fontSize: 12,
+    color: Colors.light.white,
+    opacity: 0.8,
+    marginBottom: 4,
+  },
+  statValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.light.white,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  statDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: Colors.light.white,
+    opacity: 0.3,
+  },
+  section: {
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.light.gray,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: Colors.light.secondary,
+    marginBottom: 12,
+  },
+  aboutText: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: Colors.light.darkGray,
+  },
+  servicesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  serviceTag: {
+    backgroundColor: Colors.light.gray,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  serviceText: {
+    fontSize: 14,
+    color: Colors.light.secondary,
+  },
+  reviewCard: {
+    backgroundColor: Colors.light.gray,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  reviewerName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.light.secondary,
+  },
+  reviewRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  reviewRatingText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: Colors.light.secondary,
+  },
+  reviewDate: {
+    fontSize: 12,
+    color: Colors.light.darkGray,
+    marginBottom: 8,
+  },
+  reviewComment: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: Colors.light.darkGray,
+  },
+  footer: {
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: Colors.light.gray,
+    backgroundColor: Colors.light.white,
+  }
+});
